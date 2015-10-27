@@ -12,6 +12,7 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 var results = [];
+var url = require('url');
 
 var qs = require('querystring');
 var requestHandler = function(request, response) {
@@ -45,15 +46,12 @@ var requestHandler = function(request, response) {
         });
 
         request.on('end', function () {
-            var post = qs.parse(body);
+            var post = JSON.parse(body);
             console.log(post)
-            results.push(post);
+            results.unshift(post);
         });
 
       }
-
-   // if (request.method = 'GET') {
-
   var headers = defaultCorsHeaders;
 
   // You will need to change this if you are sending something
@@ -61,7 +59,19 @@ var requestHandler = function(request, response) {
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+
+   if (request.method = 'GET') { 
+    if (request.url === '/classes/' || request.url === '/classes/messages' || request.url === '/classes/room1') {
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify({results:results}));
+    } else {
+      statusCode = 404;
+      response.writeHead(statusCode, headers);
+      response.end();
+    }
+   }
+
+  // response.writeHead(statusCode, headers);
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -72,10 +82,10 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
   // response.send(JSON.stringify({results:results}));
 
-  response.end(JSON.stringify({results:results}));
+  // response.end(JSON.stringify({results:results}));
 };
 
-exports.handleRequest = requestHandler;
+exports.requestHandler = requestHandler;
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
