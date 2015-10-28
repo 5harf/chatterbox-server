@@ -69,7 +69,7 @@ app.userInfo = {
 
 };
 
-app.server = 'http://127.0.0.1:3000/classes/';
+app.server = 'http://localhost:3000/classes/';
 
 //posts user message to server
 app.send = function(message) {
@@ -106,7 +106,7 @@ app.fetch = function() {
     contentType: 'application/json',
     success: function(response){
       var result = JSON.parse(response).results;
-      console.log(response);
+      console.log(result);
      var $div;
 
      //goes through response-results
