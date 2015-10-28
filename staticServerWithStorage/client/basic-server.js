@@ -65,6 +65,8 @@
 
 
 var express = require('express');
+var fs = require('fs');
+
 var app = express();
 var result = [];
 // var cors = require('cors');
@@ -83,6 +85,7 @@ app.get('/index', function (req, res) {
 });
 
 app.post('/classes/', function (req, res) {
+  // instead use bodyParser
   // var data='';
   //   req.setEncoding('utf8');
   //   req.on('data', function(chunk) { 
@@ -94,12 +97,23 @@ app.post('/classes/', function (req, res) {
   //   });
   
   result.unshift(req.body);
+  fs.appendFile('messages.txt', JSON.stringify(req.body) + '\n')
   console.log(req.body);
   res.send();
 });
 
 app.get('/classes/', function(req, res) {
-  res.end(JSON.stringify({results:result}))
+  var messages = fs.readFileSync('messages.txt', 'utf8');
+
+  messages = messages.split('\n').reverse();
+  messages.shift();
+  messages = messages.map(function(element) {
+    if (element) {
+      return JSON.parse(element);
+    }
+  });
+  console.log(messages)
+  res.end(JSON.stringify({results:messages}))
 })
 var server = app.listen(3000, function () {
   var host = server.address().address;
